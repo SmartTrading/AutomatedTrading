@@ -45,13 +45,21 @@ regConstUB = 2
 sgdRate = 0.00001
 
 
+# 
+resultDir = 'krr_' + str(horizon) + 'step_' + str(sgdRate)
+if not os.path.exists(resultDir):
+    os.makedirs(resultDir)
+    
+    
+
+
 # searching best hyper-parameter in validation data
 hpsearch = HyperParameterSearch(hyperParamValidationData, order, trainingWindow, horizon, retrainPeriod \
              , kernelWidthLowerBound = kernelLB , kernelWidthUpperBound = kernelUB, reglrConstLowerBound = regConstLB, reglrConstUpperBound = regConstUB, \
                  numberRandomDraws = args.numberDraws, numberGridPoints = args.numberGridPoints)
 
 #outputPath = args.hyperParamOutputFile
-outputPath = os.getcwd() + '/experiments/' + args.timeSeriesCSV.replace('.csv','').replace('data/','') + '_HPsearch.o'
+outputPath = os.getcwd() + '/' + resultDir + '/' + args.timeSeriesCSV.replace('.csv','').replace('data/','') + '_HPsearch.o'
 randomSearchResult = hpsearch.RandomSearch(outputPath)
 gridSearchResult = hpsearch.GridSearch(outputPath)
 
@@ -68,7 +76,7 @@ testScores_SGDHP = backtester.backTesting(retrainPeriod,algo,componentKernelWidt
 
 # configuration file
 #confiFilePath = args.configurationFile
-confiFilePath = os.getcwd() + '/experiments/' + args.timeSeriesCSV.replace('.csv','').replace('data/','') + '_testing.o'
+confiFilePath = os.getcwd() + '/' + resultDir  + '/' + args.timeSeriesCSV.replace('.csv','').replace('data/','') + '_testing.o'
 
 with open(confiFilePath,'a') as confiFile:
     confiFile.write('input time series CSV:' + args.timeSeriesCSV + '\n')

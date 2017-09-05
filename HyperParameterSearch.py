@@ -30,12 +30,12 @@ class HyperParameterSearch:
     def RandomSearch(self,outputPath):
         
         
-        RollingBackTestKRR = RollingBackTestKRR(self.timeSeriesData, self.order, self.trainingWindow, self.horizon)
+        backtester = RollingBackTestKRR(self.timeSeriesData, self.order, self.trainingWindow, self.horizon)
         
         for trial in range(self.numberRandomDraws):
             kernelWidth = np.random.uniform(self.kernelWidthLowerBound,self.kernelWidthUpperBound,size=self.order)
             print("draws for componentwise kernel width: ",kernelWidth)
-            testScores = RollingBackTestKRR.backTesting(self.order,'fixed',componentKernelWidth=kernelWidth)
+            testScores = backtester.backTesting(self.order,'fixed',componentKernelWidth=kernelWidth)
             if testScores.get('mse')[0] < self.bestMSE :
                 self.bestMSE = testScores.get('mse')[0]
                 self.bestKernelWidth = kernelWidth
@@ -61,12 +61,12 @@ class HyperParameterSearch:
                 
     def GridSearch(self,outputPath):
         
-        RollingBackTestKRR = RollingBackTestKRR(self.timeSeriesData, self.order, self.trainingWindow, self.horizon)
+        backtester = RollingBackTestKRR(self.timeSeriesData, self.order, self.trainingWindow, self.horizon)
         grids = np.linspace(self.kernelWidthLowerBound,self.kernelWidthUpperBound,self.numberGridPoints)
         for g in grids:
             
             kernelWidth = g * np.ones(self.order)
-            testScores = RollingBackTestKRR.backTesting(self.order,'fixed',componentKernelWidth=kernelWidth)
+            testScores = backtester.backTesting(self.order,'fixed',componentKernelWidth=kernelWidth)
             if testScores.get('mse')[0] < self.bestMSE :
                 self.bestMSE = testScores.get('mse')[0]
                 self.bestKernelWidth = kernelWidth
